@@ -1,0 +1,13 @@
+D:/eural_network/yolo3-keras/VOCdevkit/VOC2007/JPEGImages/000000000078.jpg
+D:/eural_network/yolo3-keras/VOCdevkit/VOC2007/JPEGImages/000000000133.jpg
+D:/eural_network/yolo3-keras/VOCdevkit/VOC2007/JPEGImages/000000000201.jpg
+D:/eural_network/yolo3-keras/VOCdevkit/VOC2007/JPEGImages/000000000208.jpg
+D:/eural_network/yolo3-keras/VOCdevkit/VOC2007/JPEGImages/000000000382.jpg
+D:/eural_network/yolo3-keras/VOCdevkit/VOC2007/JPEGImages/000000000384.jpg
+D:/eural_network/yolo3-keras/VOCdevkit/VOC2007/JPEGImages/000000000394.jpg
+D:/eural_network/yolo3-keras/VOCdevkit/VOC2007/JPEGImages/000000000428.jpg
+D:/eural_network/yolo3-keras/VOCdevkit/VOC2007/JPEGImages/000000000438.jpg
+D:/eural_network/yolo3-keras/VOCdevkit/VOC2007/JPEGImages/000000000488.jpg
+D:/eural_network/yolo3-keras/VOCdevkit/VOC2007/JPEGImages/000000000536.jpg
+D:/eural_network/yolo3-keras/VOCdevkit/VOC2007/JPEGImages/000000000575.jpg
+D:/eural_network/yolo3-keras/VOCdevkit/VOC2007/JPEGImages/000000000589.jpg
