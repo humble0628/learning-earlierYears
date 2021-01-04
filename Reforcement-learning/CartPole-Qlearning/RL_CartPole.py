@@ -1,9 +1,11 @@
 '''
 模块导入
 '''
+import os
 import gym
 import time
 import numpy as np
+from PIL import Image
 import matplotlib.pyplot as plt
 from gym.envs.registration import register
 
@@ -29,8 +31,8 @@ ENV = 'CartPole-v2'
 NUM_DIGITIZED = 6
 GAMMA = 0.99 #decrease rate
 ETA = 0.5 #learning rate
-MAX_STEPS = 300 #steps for 1 episode
-NUM_EPISODES = 2000 #number of episodes
+MAX_STEPS = 2000 #steps for 1 episode
+NUM_EPISODES = 3000 #number of episodes
 #===========================================
 
 '''
@@ -72,7 +74,7 @@ class Brain:
         # get the discrete state in total 1296 states
         cart_pos, cart_v, pole_angle, pole_v = observation
 
-        # 依据环境限制条件，创建智能体状态序列，共有4种状态
+        # 依据环境限制条件，创建智能体状态序列，共有6**4种状态
         digitized = [
             np.digitize(cart_pos, bins=self.bins(-2.4, 2.4, NUM_DIGITIZED)),
             np.digitize(cart_v, bins=self.bins(-3.0, 3.0, NUM_DIGITIZED)),
@@ -116,62 +118,59 @@ class Environment:
 
     def __init__(self):
         self.env = gym.make(ENV)
-        num_states = self.env.observation_space.shape[0]  # 4
-        num_actions = self.env.action_space.n  # 2
-        self.agent = Agent(num_states, num_actions)  # create the agent
+        num_states = self.env.observation_space.shape[0]
+        num_actions = self.env.action_space.n
+        self.agent = Agent(num_states, num_actions)
+        self.gif500 = 'gif500'
+        self.gif1000 = 'gif1000'
+        self.gif2000 = 'gif2000'
 
     def run(self):
-        complete_episodes = 0  # succeed episodes that hold on for more than 195 steps
-        is_episode_final = False  # last episode flag
-        frames = []  # for animation
+        complete_episodes = 0
 
-        for episode in range(NUM_EPISODES):  # 1000 episodes
-            observation = self.env.reset()  # initialize environment
+        for episode in range(NUM_EPISODES):
+            observation = self.env.reset()
 
-            for step in range(MAX_STEPS):  # steps in one episode
+            for step in range(MAX_STEPS):
 
-                # if is_episode_final is True:  # True / False is singleton in Python, so can use "is" to compare the object, while "==" compares the value
-                #     frames.append(self.env.render(mode='rgb_array'))
-                self.env.render(mode='rgb_array')
-                action = self.agent.get_action(observation, episode)  # not step
+                self.frame = self.env.render(mode='rgb_array')
+                action = self.agent.get_action(observation, episode)
 
-                # get state_t+1, reward from action_t
-                observation_next, _, done, _ = self.env.step(action)  # reward and info not need
-                # if use default reward, use following:
-                # observation_next, reward, done, _ = self.env.step(action)   #Test
-                # self.agent.update_Q_function(observation, action, reward, observation_next) #Test
-                # observation = observation_next #Test
+                observation_next, _, done, _ = self.env.step(action)
 
-                # get reward
-                if done:  # step > 200 or larger than angle
-                    if step < 195:
-                        reward = -1  # give punishment if game over less than last step
-                        complete_episodes = 0  # game over less than 195 step then reset
+                # 设置回馈更新方式
+                if done:
+                    if step < 195 * 10:
+                        reward = -1
+                        complete_episodes = 0
                     else:
                         reward = 1
                         complete_episodes += 1
                 else:
-                    reward = 0  # until done, reward is 0
+                    reward = 0
 
-                # update Q table
+                # Q表的权值更新
                 self.agent.update_Q_function(observation, action, reward, observation_next)
-
-                # update observation
                 observation = observation_next
 
-                time.sleep(0.03)
+                # 图片保存，用于制作动态图
+                # if episode >= 500 and episode < 520:
+                #     save = Image.fromarray(self.frame)
+                #     save.save('%s/%d.jpg' % (self.gif500,episode))
+                #
+                # if episode >= 1000 and episode < 1020:
+                #     save = Image.fromarray(self.frame)
+                #     save.save('%s/%d.jpg' % (self.gif1000,episode))
+                #
+                # if episode >= 2000 and episode < 2020:
+                #     save = Image.fromarray(self.frame)
+                #     save.save('%s/%d.jpg' % (self.gif2000,episode))
 
                 if done:
                     print('{0} Episode: Finished after {1} time steps'.format(episode, step + 1))
                     break
 
-            # if is_episode_final is True:  # save the animation
-            #     display_frames_as_gif(frames)
-            #     break
-
-            if complete_episodes >= 10:
-                print('succeeded for 10 times')
-                is_episode_final = True
+    #def compose_gif(self):
 
 '''
 主程序
@@ -180,9 +179,8 @@ if __name__ == "__main__":
     register(
         id = 'CartPole-v2',
         entry_point='gym.envs.classic_control:CartPoleEnv',
-        max_episode_steps = 300,
-        reward_threshold = 300,
+        max_episode_steps = 200 * 10,
+        reward_threshold = 195 * 10,
     )
     env = Environment()
     env.run()
-
